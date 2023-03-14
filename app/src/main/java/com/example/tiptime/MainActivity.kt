@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -20,6 +21,7 @@ import com.example.tiptime.ui.theme.TipTimeTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.KeyboardType
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,12 +56,18 @@ fun TipTimeScreen() {
     }
 
 }
-
+// функция для вода пользователя
 @Composable
 fun EditNumberField() {
+//    изменяемая перменая для отслеживания вода через состояния
     var amountInput by remember { mutableStateOf("") }
-    TextField(value = amountInput,
-        onValueChange = {amountInput = it} )
+    TextField(value = amountInput, // значение
+        onValueChange = {amountInput = it}, // возращаемое значение
+    label = { Text(text = stringResource(id = R.string.cost_of_service))}, // лэйбел для ввода который помогает понять пользователю о контексте
+    modifier = Modifier.fillMaxWidth(), // модификатор занять всю ширину
+    singleLine = true, // парамет сводяший поля вода в одну строку
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) // опция для вода с клавиатуры только цифр
+    )
 
 }
 
