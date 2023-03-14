@@ -44,6 +44,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TipTimeScreen() {
+    var amountInput by remember { mutableStateOf("") }
+    val amount = amountInput.toDoubleOrNull() ?: 0.0 // пользовательский ввод приходит стракой поэтому преобразуем его в деситичное значений и проверяем на null
+    val tip = calculateTip(amount)
     Column(
         modifier = Modifier.padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -55,9 +58,10 @@ fun TipTimeScreen() {
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        EditNumberField()
+        EditNumberField(value = amountInput, // передаем текушее состояние вода пользователя
+            onValueChange = {amountInput = it}) // пердаем веденое значение
         Spacer(modifier = Modifier.height(24.dp)) // добовляем промежуток высотой 24 пикселя уневерсальных
-        Text(text = stringResource(id = R.string.tip_amount), // добовляе строковый ресурс который использует для отображения чайвых с валютой
+        Text(text = stringResource(id = R.string.tip_amount, tip), // добовляе строковый ресурс который использует для отображения чайвых с валютой
         modifier = Modifier.align(Alignment.CenterHorizontally), // модефикатор выравнивания по горизонтали в центре
         fontSize = 20.sp, // размер шрифта 20
         fontWeight = FontWeight.Bold // толстый шрифт
@@ -70,14 +74,17 @@ fun TipTimeScreen() {
 
 // функция для вода пользователя
 @Composable
-fun EditNumberField() {
-//    изменяемая перменая для отслеживания вода через состояния
-    var amountInput by remember { mutableStateOf("") }
-    val amount = amountInput.toDoubleOrNull() ?: 0.0 // пользовательский ввод приходит стракой поэтому преобразуем его в деситичное значений и проверяем на null
-    val tip = calculateTip(amount)
+fun EditNumberField(
+//    Подъем состояния - это шаблон перемещения состояния до другой функции, чтобы сделать компонент без состояния.
+// Применительно к составным элементам это часто означает введение двух параметров в составное:
+    value: String, // текуший параметр для отображения
+    onValueChange: (String) -> Unit // код для обратного вызова, для измения состояния
+) {
+
+
     TextField(
-        value = amountInput, // значение
-        onValueChange = { amountInput = it }, // возращаемое значение
+        value = value, // значение текущее
+        onValueChange = onValueChange, // возращаемое значение для изменения состояния
         label = { Text(text = stringResource(id = R.string.cost_of_service)) }, // лэйбел для ввода который помогает понять пользователю о контексте
         modifier = Modifier.fillMaxWidth(), // модификатор занять всю ширину
         singleLine = true, // парамет сводяший поля вода в одну строку
