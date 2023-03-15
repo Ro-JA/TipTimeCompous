@@ -49,7 +49,8 @@ fun TipTimeScreen() {
     var tipInput by remember { mutableStateOf("") }
     val tipPresent = tipInput.toDoubleOrNull() ?: 0.0
     var amountInput by remember { mutableStateOf("") }
-    val amount = amountInput.toDoubleOrNull() ?: 0.0 // пользовательский ввод приходит стракой поэтому преобразуем его в деситичное значений и проверяем на null
+    val amount = amountInput.toDoubleOrNull()
+        ?: 0.0 // пользовательский ввод приходит стракой поэтому преобразуем его в деситичное значений и проверяем на null
     val tip = calculateTip(amount, tipPresent)
     Column(
         modifier = Modifier.padding(32.dp),
@@ -65,9 +66,15 @@ fun TipTimeScreen() {
         EditNumberField(label = R.string.tip_amount,
             value = amountInput, // передаем текушее состояние вода пользователя
             onValueChange = { amountInput = it }) // пердаем веденое значение
-        EditNumberField(label = R.string.how_was_the_service,
+        EditNumberField(
+            label = R.string.how_was_the_service,
             value = tipInput,
-            onValueChange = {tipInput = it})
+            onValueChange = { tipInput = it },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            )
+        )
         Spacer(modifier = Modifier.height(24.dp)) // добовляем промежуток высотой 24 пикселя уневерсальных
         Text(
             text = stringResource(
@@ -90,6 +97,7 @@ fun EditNumberField(
 //    Подъем состояния - это шаблон перемещения состояния до другой функции, чтобы сделать компонент без состояния.
 // Применительно к составным элементам это часто означает введение двух параметров в составное:
     @StringRes label: Int, // добовляем параметр лэйбел для переиспользования функций, чтобы покозать что ожидаеться строковый ресурс добовляем анотацию
+    keyboardOptions: KeyboardOptions, // параметр для устоновки типа клавиатуры
     value: String, // текуший параметр для отображения
     onValueChange: (String) -> Unit, // код для обратного вызова, для измения состояния
     modifier: Modifier = Modifier // рекомендуеться добовлять параметр модификатора после обезательных параметров для дольнейщего переиспользования функций
@@ -102,8 +110,7 @@ fun EditNumberField(
         label = { Text(text = stringResource(label)) }, // лэйбел для ввода который помогает понять пользователю о контексте
         modifier = Modifier.fillMaxWidth(), // модификатор занять всю ширину
         singleLine = true, // парамет сводяший поля вода в одну строку
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number,
-        imeAction = ImeAction.Next) // опция для вода с клавиатуры только цифр
+        keyboardOptions = keyboardOptions
     )
 }
 
