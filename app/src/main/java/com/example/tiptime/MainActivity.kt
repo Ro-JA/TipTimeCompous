@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -22,6 +23,8 @@ import com.example.tiptime.ui.theme.TipTimeTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,6 +49,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TipTimeScreen() {
+    val focusManager = LocalFocusManager.current // используеться для перемещения и снятия фокуса
     var tipInput by remember { mutableStateOf("") }
     val tipPresent = tipInput.toDoubleOrNull() ?: 0.0
     var amountInput by remember { mutableStateOf("") }
@@ -63,16 +67,26 @@ fun TipTimeScreen() {
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        EditNumberField(label = R.string.tip_amount,
+        EditNumberField(label = R.string.bill_amount,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next
+            ), // добавили параметр настройки клавиатуры
             value = amountInput, // передаем текушее состояние вода пользователя
-            onValueChange = { amountInput = it }) // пердаем веденое значение
+            onValueChange = { amountInput = it }, // пердаем веденое значение
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) } // сместить фокус в низ
+            ))
         EditNumberField(
             label = R.string.how_was_the_service,
             value = tipInput,
             onValueChange = { tipInput = it },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }  // очищает фокус после действия
             )
         )
         Spacer(modifier = Modifier.height(24.dp)) // добовляем промежуток высотой 24 пикселя уневерсальных
@@ -98,6 +112,7 @@ fun EditNumberField(
 // Применительно к составным элементам это часто означает введение двух параметров в составное:
     @StringRes label: Int, // добовляем параметр лэйбел для переиспользования функций, чтобы покозать что ожидаеться строковый ресурс добовляем анотацию
     keyboardOptions: KeyboardOptions, // параметр для устоновки типа клавиатуры
+    keyboardActions: KeyboardActions,
     value: String, // текуший параметр для отображения
     onValueChange: (String) -> Unit, // код для обратного вызова, для измения состояния
     modifier: Modifier = Modifier // рекомендуеться добовлять параметр модификатора после обезательных параметров для дольнейщего переиспользования функций
@@ -110,7 +125,9 @@ fun EditNumberField(
         label = { Text(text = stringResource(label)) }, // лэйбел для ввода который помогает понять пользователю о контексте
         modifier = Modifier.fillMaxWidth(), // модификатор занять всю ширину
         singleLine = true, // парамет сводяший поля вода в одну строку
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions
+
     )
 }
 
