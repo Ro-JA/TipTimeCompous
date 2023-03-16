@@ -7,10 +7,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +46,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TipTimeScreen() {
+    var roundUp by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current // используеться для перемещения и снятия фокуса
     var tipInput by remember { mutableStateOf("") }
     val tipPresent = tipInput.toDoubleOrNull() ?: 0.0
@@ -100,6 +98,8 @@ fun TipTimeScreen() {
             fontWeight = FontWeight.Bold // толстый шрифт
         )
 
+        RoundTheTipRow(roundUp = roundUp, onRoudUpChanged = { roundUp = it}) // выводем переключатель на юй
+
 
     }
 
@@ -129,6 +129,30 @@ fun EditNumberField(
         keyboardActions = keyboardActions
 
     )
+}
+
+// функция для переключателя чайвых
+@Composable
+fun RoundTheTipRow(
+    modifier: Modifier = Modifier,
+    roundUp: Boolean,
+    onRoudUpChanged: (Boolean) -> Unit
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .size(48.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = stringResource(id = R.string.round_up_tip))
+        Switch(
+            checked = roundUp,
+            onCheckedChange = onRoudUpChanged,
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End)
+        )
+    }
 }
 
 // функция для подсчета чаевых 15% от суммы
