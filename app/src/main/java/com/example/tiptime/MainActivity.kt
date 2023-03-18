@@ -99,7 +99,9 @@ fun TipTimeScreen() {
             fontWeight = FontWeight.Bold // толстый шрифт
         )
 
-        RoundTheTipRow(roundUp = roundUp, onRoudUpChanged = { roundUp = it}) // выводем переключатель на юй
+        RoundTheTipRow(
+            roundUp = roundUp,
+            onRoudUpChanged = { roundUp = it }) // выводем переключатель на юй
 
 
     }
@@ -166,12 +168,13 @@ private fun calculateTip(
     roundUp: Boolean
 ): String {
 
-    val tip = tipPresent / 100 * amount
-    return NumberFormat.getCurrencyInstance()
-        .format(tip) // класс позволяет формотировать значения в качестве валюты
-    if (roundUp){
+    var tip = tipPresent / 100 * amount
+    if (roundUp) {
         tip = kotlin.math.ceil(tip)
     }
+    return NumberFormat.getCurrencyInstance()
+        .format(tip) // класс позволяет формотировать значения в качестве валюты
+
 
 }
 
