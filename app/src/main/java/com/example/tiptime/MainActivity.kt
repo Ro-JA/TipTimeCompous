@@ -54,7 +54,7 @@ fun TipTimeScreen() {
     var amountInput by remember { mutableStateOf("") }
     val amount = amountInput.toDoubleOrNull()
         ?: 0.0 // пользовательский ввод приходит стракой поэтому преобразуем его в деситичное значений и проверяем на null
-    val tip = calculateTip(amount, tipPresent)
+    val tip = calculateTip(amount, tipPresent, roundUp)
     Column(
         modifier = Modifier.padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -162,11 +162,16 @@ fun RoundTheTipRow(
 // функция для подсчета чаевых 15% от суммы
 private fun calculateTip(
     amount: Double,
-    tipPresent: Double = 15.0
+    tipPresent: Double = 15.0,
+    roundUp: Boolean
 ): String {
+
     val tip = tipPresent / 100 * amount
     return NumberFormat.getCurrencyInstance()
         .format(tip) // класс позволяет формотировать значения в качестве валюты
+    if (roundUp){
+        tip = kotlin.math.ceil(tip)
+    }
 
 }
 
